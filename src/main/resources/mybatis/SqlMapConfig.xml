@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+
+<configuration>
+
+  <typeAliases>
+    <package name="com.ek.basic.demo1.po"/>
+    <package name="com.ek.basic.demo3.model.po"/>
+    <package name="com.ek.basic.demo3.model.pojo"/>
+    <package name="com.ek.basic.demo3.model.vo"/>
+  </typeAliases>
+  
+  <mappers>
+    <!-- demo1 加载dao方式的映射文件 -->
+    <mapper resource="mybatis/SqlMapConfig-demo1.xml"/>
+    <!-- mapper方式的spring中用mapper扫描器扫描了 这就不用扫了 -->
+  </mappers>
+
+</configuration>

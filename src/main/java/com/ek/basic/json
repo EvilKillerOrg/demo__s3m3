@@ -1,0 +1,11 @@
+客户端请求----------->
+----------->请求是json串----------->@RequestBody将串转成java对象----------->ResponseBody将java对象转成json串输出
+----------->请求是key/value----------->不需要@RequestBody将串转成java对象----------->ResponseBody将java对象转成json串输出
+
+
+contextType:
+json串 = application/json (需要指定)
+key/value = application/x-www-form-urlen (默认的不需要指定)
+看jsonTest.jsp页面上 function 中有例子
+
+还需要jar包 还需要jquery

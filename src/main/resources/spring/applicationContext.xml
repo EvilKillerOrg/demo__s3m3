@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+
+
+  <!-- 加载数据库连接配置文件 -->
+  <context:property-placeholder location="classpath:jdbc.properties" />
+  
+  
+  
+  <!-- 使用了DBCP数据源 -->
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="driverClassName" value="${jdbc.driverClassName}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" />
+    <property name="maxActive" value="10" />
+    <property name="maxIdle" value="5"></property>
+  </bean>
+
+
+
+  <!-- 在spring中配置mybatis的SqlSessionFactory(在mybatis提供的spring整合包中) -->
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"></property> <!-- 关联数据源 -->
+    <property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"></property> <!-- 加载mybatis配置文件 -->
+  </bean>
+  
+  
+  <!-- 配置mapper扫描器 这里没有id指定bean名 自动扫描出来的bean的id为mapper类名首字母小写
+       不知道为啥接口名称前面有两个大写字母的时候首字母小写找不到而大写能找到(如IUserInfo)
+   -->
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <!-- 指定要扫描的包名 这里扫描了 在SqlMapConfig.xml中就不用扫了 要扫描多个包,包之间用半角,分隔-->
+    <property name="basePackage" value="com.ek.basic.demo1.mapper,com.ek.basic.demo3.model.mapper"/>
+    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+  </bean>
+  
+  
+
+
+</beans>

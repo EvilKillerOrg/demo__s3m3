@@ -1,0 +1,39 @@
+MVC
+
+
+组件:
+1 前端控制器 DispatcherServlet (struts2是Filter)<C> - 接收请求,响应结果 相当于转发器
+
+2 处理器映射器 HandlerMapping - 根据请求的url来查找Handler
+
+3 后端处理器 Handler (struts2是action)<M>
+
+4 处理器适配器 HandlerAdapter - 按要求执行Handler (编写Handler时按照HandlerAdapter的要求去做,这样适配器才可以去执行Handler)
+
+5 视图解析器 ViewResolver - 进行视图解析 根据逻辑视图名解析成真正的视图(View)
+
+6 视图 View 是一个接口,实现类支持不同的View类型(jsp freemarker excel pdf)
+
+
+过程:
+
+1.发起请求到DispatcherServlet(前端控制器)
+2.DispatcherServlet请求HandleMapping(处理器映射器)去查找Handler(后端处理器)
+3.查找后HandleMapping向DispatcherServlet返回Handler
+4.返回后DispatcherServlet调用HandlerAdapter(处理器适配器)执行Handler
+5.HandlerAdapter执行Handler
+6.Handler执行后给HandlerAdapter返回ModelAndView
+7.HandlerAdapter向DispatcherServlet返回ModelAndView
+8.DispatcherServlet请求ViewResolver(视图解析器)去进行视图解析
+9.ViewResolver向DispatcherServlet返回View
+10.DispatcherServlet进行视图渲染
+11.DispatcherServlet向用户响应结果
+
+
+
+学习
+非注解的处理器映射器,处理器适配器
+注解的处理器映射器,处理器适配器
+
+参数绑定(简单类型,pojo,集合类型)
+自定义参数绑定

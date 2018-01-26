@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ek.basic.demo3.model.mapper.ItemsCustomMapper">
+
+  <!-- 定义商品查询的sql片段,就是商品的查询条件 -->
+  <sql id="query_items_where">
+    <!-- 使用动态sql,通过if判断,满足条件的进行sql拼接 -->
+    <!-- 商品查询条件通过ItemsQueryVO包装对象的itemsPOJO属性来传递 -->
+    <if test="itemsPOJO!=null">
+      <if test="itemsPOJO.name!=null and itemsPOJO.name!=''">
+        i.name LIKE '%${itemsPOJO.name}%'       
+      </if>
+    </if>
+  </sql>
+
+
+
+
+
+  <!-- 商品列表查询, 
+       parameterType 传入包装对象VO(包装了查询条件)
+       resultType 传入扩展对象POJO(查询结果可以比原始PO的字段多) -->
+  <select id="findItemsList" parameterType="ItemsCustomVO" resultType="ItemsPOJO">
+    SELECT * FROM m_items i 
+    <where>
+      <!-- 引用sql片段 -->
+      <include refid="query_items_where"></include>
+    </where>
+  </select>
+  
+  
+  
+  <!-- 根据id查询商品信息 -->
+  <select id="findItemsById" parameterType="int" resultType="ItemsPOJO">
+    select * from m_items i where id=#{id}
+  </select>
+  
+  
+  
+  <!-- 修改商品信息 -->
+  <update id="updateItems" parameterType="Items">
+    update m_items set name=#{name}, price=#{price}, detail=#{detail}, createtime=#{createTime}
+      <if test="pic!=null">
+        ,pic=#{pic}
+      </if>
+    where id=#{id}
+  </update>
+  
+</mapper>

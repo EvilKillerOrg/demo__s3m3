@@ -1,0 +1,14 @@
+服务端校验
+
+控制层 校验请求的参数的合法性
+
+业务层(使用较多) 主要校验关键业务参数(仅限于service接口中使用的参数)
+
+持久层 一般不校验
+
+
+springmvc 使用的是 hibernate 的校验框架validation(和hibernate框架没关系)
+
+要配置一个校验器 注入到 适配器中 
+在pojo中添加校验规则 读取错误信息配置文件中的错误提示信息
+在controller中需要使用校验的方法需要在校验的形参pojo前面要加一个@Validated 后面要加一个BindingResult bindingResult 参数(详见updateItems方法)

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+
+
+ <!-- 这个配置文件 是demo1 中测试dao模式和mapper模式 时使用的配置文件,mapper模式在总配置文件中扫描了,这里就注释掉了 -->
+ 
+
+
+
+
+  <!-- 这个类是测试传统dao接口方式开发用的 -->
+  <bean id="userInfoDAOImpl" class="com.ek.basic.demo1.dao.UserInfoDAOImpl">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+  </bean>
+
+
+
+
+  <!-- userInfoMapper是接口不能实例 这里就用org.mybatis.spring.mapper.MapperFactoryBean根据mapper接口生产代理对象
+       这里一个个mapper去配置麻烦,用mapper扫描器(MapperScannerConfigurer)对mapper批量扫描,并注入相关参数 -->
+      <!--
+  <bean id="userInfoMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+     给MapperFactoryBean指定需要产生代理对象的mapper接口  
+    <property name="mapperInterface" value="com.ek.basic.model.mapper.IUserInfoMapper"/> 
+      MapperFactoryBean还需要sqlSessionFactory (MapperFactoryBean继承SqlSessionDaoSupport,SqlSessionDaoSupport参看dao方式的代码) 
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+  </bean>
+   -->
+  
+
+  
+
+
+</beans>

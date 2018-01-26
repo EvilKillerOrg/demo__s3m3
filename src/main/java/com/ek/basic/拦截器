@@ -1,0 +1,8 @@
+struts2 的拦截器链 是一个全局的 所有的action 都会拦截的
+
+配置方式1:
+springmvc 的拦截器 是针对 HandlerMapping进行拦截设置
+就是说如果在某个HandlerMapping中配置拦截,经过该HandlerMapping映射成功的Handler才会被拦截器拦截
+
+配置方式2:(这个不麻烦推荐用)
+springmvc配置类似全局的拦截器,springmvc框架可以将配置的类似全局的拦截器注入到每个HandlerMapping中

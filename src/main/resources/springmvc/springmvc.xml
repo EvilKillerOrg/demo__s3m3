@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+  <!-- 
+    配置处理器映射器(多个映射器可以并存 且不需要和Handler配对使用), 作用是找Handler
+    处理器适配器(Handler实现哪个适配器的时候就要配置哪个适配器), 作用是执行Handler
+    视图解析器
+    非注解的Handler不用映射器和适配器配对使用 注解的Handler映射器和适配器要配对使用
+  -->
+  
+  
+  
+  <!-- 配置Handler1 -->
+  <bean id="userInfoController1" name="/queryUsers1_1.do" class="com.ek.basic.demo2.controller.UserInfoController1"></bean>
+  <!-- 配置Handler2 -->
+  <bean id="userInfoController2" class="com.ek.basic.demo2.controller.UserInfoController2"></bean>
+
+
+  
+  
+  
+  <!-- 配置非注解适配器1   这个适配器要求编写的Handler 实现 Controller 接口 -->
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"></bean>
+  <!-- 配置非注解适配器2   这个适配器要求编写的Handler 实现 HttpRequestHandler 接口 -->
+  <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"></bean>
+  <!-- 配置注解适配器 参看mvc:annotation-driven -->
+  <!-- spring3.1以前用:org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter-->
+  <!-- spring3.1以后用:org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter -->  
+
+
+
+
+  
+  <!-- 配置非注解映射器1    Handler bean的name就是访问url (需要在配置Handler时指定name)-->
+  <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+  <!-- 配置非注解映射器2    这个需要在prop指定Handler的id 可以在props里配置多个Handler的id -->
+  <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <!-- 1_1.do和1_2.do 1_3.do的映射器不同,1_2.do和1_3.do同一个方法配了2个url, 2.do的和1_x.do的适配器不同,和1_1的映射器不同 -->
+        <prop key="/queryUsers1_2.do">userInfoController1</prop>
+        <prop key="/queryUsers1_3.do">userInfoController1</prop>
+        <prop key="/queryUsers2.do">userInfoController2</prop>
+        <!-- 这两个Handler的适配器不一样但是可以在一个映射器中使用,非注解的Handler不用配对使用适配器和映射器,注解的要配对 -->
+      </props>
+    </property>
+  </bean>
+  <!-- 配置注解映射器 参看mvc:annotation-driven -->
+  <!-- spring3.1以前用:org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping -->
+  <!-- spring3.1以后用:org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping -->
+
+  
+ 
+ 
+ 
+  <!-- 配置这个可以代替配置注解映射器和适配器,如果不用这个就要配置注解的映射器和适配器(配对使用)
+       这个还默认加载了很多参数绑定的方法.如json转换解析器,所以一般这样配置 
+       使用自定义参数绑定 , 校验器 的时候需要 注入给适配器 在这里直接配conversion-service和validator就行了-->
+  <mvc:annotation-driven conversion-service="conversionService" validator="validator"></mvc:annotation-driven>
+  
+  
+  
+  
+  
+  <!-- 通过组件扫描在IoC容器中加载bean 就不用一个个bean的配置了 可以扫描到@Controller,@Service,@Repository等标识的组件 -->
+  <context:component-scan base-package="com.ek.basic.demo2.controller"></context:component-scan>
+  <context:component-scan base-package="com.ek.basic.demo3.controller"></context:component-scan>
+  <context:component-scan base-package="com.ek.basic.demo4.controller"></context:component-scan>
+  
+  
+  
+  
+  
+  <!-- 配置视图解析器1 (这里配置的是jsp的视图解析器) -->
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/jsp"></property><!-- 前缀 -->
+    <property name="suffix" value=".jsp"></property><!-- 后缀 -->
+  </bean>
+  
+  
+  
+  
+  <!-- 自定义参数绑定接口 可以注入自己写的转换器(converters)到适配器中,适配器执行Handler的时候就会调用转换器 -->
+  <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    <property name="converters">
+      <list>
+        <!-- 日期类型转换 还可以配前后去空格之类的-->
+        <bean class="com.ek.basic.demo3.utils.converter.CustomDateConverter"></bean>
+      </list>
+    </property>
+  </bean>
+  
+  
+  
+  
+  
+  <!-- 校验器 -->
+  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    <property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+    <!-- 指定校验使用的错误信息资源文件,如果不指定默认使用classpath下的ValidationMessages.properties文件 -->
+    <property name="validationMessageSource" ref="messageSource"></property>
+  </bean>
+  <!-- 效验错误信息配置文件 -->
+  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <!-- 资源文件名 -->
+    <property name="basenames">
+      <list>
+        <value>classpath:CustomValidationMessages</value>
+      </list>
+    </property>
+    <!-- 资源文件编码格式 -->
+    <property name="fileEncodings" value="UTF-8"></property>
+    <!-- 对资源文件的缓存时间,单位秒 -->
+    <property name="cacheSeconds" value="120"></property>
+  </bean>
+  
+  
+  
+  
+  
+  <!-- 全局异常处理器 只要实现了HandlerExceptionResolver接口就是全局异常处理器(一个程序只能有一个类实现这个接口) -->
+  <bean class="com.ek.basic.demo3.utils.exception.BaseExceptionResolver"></bean>
+  
+  
+  
+  
+  
+  <!-- 多部件格式(文件上传)要配这个解析器enctype="multipart/form-data" -->
+  <!-- 使用的是commons的fileuploa 和io包-->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize"> <!-- 上传文件的最大大小 -->
+      <value>5242880</value>
+    </property>
+  </bean>
+  
+  
+  
+  
+  
+  <!-- 静态资源解析(当前端控制器的url-pattern是 / 的时候) -->
+  <!-- mvc:resources location="/js/" mapping="/js/**"/ --> <!-- js文件夹下的所有文件 -->
+  
+  
+  
+  
+  
+  <!-- 拦截器 -->
+  <!-- 如果是要用拦截器做统一的日志处理,日志的拦截器一定要放在第一个位置且preHandle要返回true放行 下来就是登陆认证拦截器 下来才是权限校验拦截器-->
+  <mvc:interceptors>
+    <!-- 可以配置多个拦截器(顺序执行,也就是拦截器链) -->
+    <mvc:interceptor>
+      <mvc:mapping path="/**"/>
+      <bean class="com.ek.basic.demo4.interceptor.LoginInterceptor"></bean>
+    </mvc:interceptor>
+   
+    <mvc:interceptor>
+      <mvc:mapping path="/**"/><!-- /** 表示所有url包括子url路径 -->
+      <bean class="com.ek.basic.demo4.interceptor.HandlerInterceptor1"></bean>
+    </mvc:interceptor>
+   
+    <mvc:interceptor>
+      <mvc:mapping path="/**"/>
+      <bean class="com.ek.basic.demo4.interceptor.HandlerInterceptor2"></bean>
+    </mvc:interceptor>
+  </mvc:interceptors>
+</beans>
